@@ -14,7 +14,7 @@ class JadwalUjianController extends Controller
     public function index()
     {
         $jadwalUjian = JadwalUjian::with(['periode', 'sesi', 'ruang'])->get();
-        return view('jadwal-ujian.index', compact('jadwalUjian'));
+        return view('admin.jadwal-ujian.index', compact('jadwalUjian'));
     }
 
     public function create()
