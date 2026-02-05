@@ -11,12 +11,9 @@ class KartuPendaftaranController extends Controller
 {
     public function cetak($periodeId)
     {
-        // $pendaftarId = session('pendaftar_id');
-        // $pendaftarId = Auth::guard('pendaftar')->id();
         $pendaftar = Auth::guard('pendaftar')->user();
-$pendaftarId = $pendaftar->id; // kolom id numeric
+        $pendaftarId = $pendaftar->id;
 
-        // dd( $pendaftarId );
 
         if (!$pendaftarId) {
             abort(403, 'Session pendaftar tidak ditemukan');
@@ -29,10 +26,10 @@ $pendaftarId = $pendaftar->id; // kolom id numeric
             'jadwalUjian.ruang',
             'periode'
         ])
-        ->where('periode_penerimaan_id', $periodeId)
-        ->where('pendaftar_id', $pendaftarId)
-        ->firstOrFail();
-      
+            ->where('periode_penerimaan_id', $periodeId)
+            ->where('pendaftar_id', $pendaftarId)
+            ->firstOrFail();
+
 
 
         $pdf = Pdf::loadView('mahasiswa.kartu.pdf', [

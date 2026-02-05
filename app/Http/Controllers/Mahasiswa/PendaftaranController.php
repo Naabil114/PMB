@@ -187,7 +187,6 @@ class PendaftaranController extends Controller
     {
         $pendaftaran = Pendaftaran::with(['programStudi', 'jadwalUjian.sesi', 'jadwalUjian.ruang'])
             ->findOrFail($id);
-            // dd($pendaftaran);  
 
         $this->authorizeAccess($pendaftaran);
 

@@ -57,15 +57,13 @@ class VerifikasiDokumenController extends Controller
         $pendaftaran = Pendaftaran::findOrFail($id);
 
         $pendaftaran->update([
-            'status_dokumen' => $request->status, // verified / rejected
+            'status_dokumen' => $request->status, 
             'alasan_penolakan' => $request->alasan,
             'diverifikasi_oleh' => auth()->id(),
             'diverifikasi_pada' => now(),
         ]);
 
         if ($request->status === 'rejected') {
-            // kirim WA ke pendaftar
-            // "Dokumen ditolak: {$request->alasan}"
         }
 
         return back()->with('success', 'Status dokumen diperbarui');
@@ -74,29 +72,24 @@ class VerifikasiDokumenController extends Controller
     public function dokumenPendaftar()
     {
         $pendaftarId = Auth::guard('pendaftar')->user();
-        // dd( $pendaftarId );
 
         $pendaftaran = Pendaftaran::where('pendaftar_id', $pendaftarId->id)
             ->with('pendaftar', 'programStudi')
             ->firstOrFail();
-            // dd( $pendaftaran );
 
         return view('mahasiswa.verifikasi-dokumen.index', compact('pendaftaran'));
     }
 
 
 
-    // Tampil form upload ulang
     public function formUploadUlang($id)
     {
         $pendaftaran = Pendaftaran::findOrFail($id);
 
-         // pastikan cuma pemilik yang bisa akses
 
         return view('mahasiswa.pendaftaran.upload-ulang', compact('pendaftaran'));
     }
 
-    // Proses upload ulang
     public function prosesUploadUlang(Request $request, $id)
 {
     $pendaftaran = Pendaftaran::findOrFail($id);
@@ -106,7 +99,6 @@ class VerifikasiDokumenController extends Controller
         'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:1024|dimensions:min_width=300,min_height=300,max_width=2000,max_height=2000',
     ]);
 
-    // Upload dokumen baru
     if ($request->hasFile('file_dokumen')) {
         $file = $request->file('file_dokumen');
         $fileName = 'dokumen_'.$pendaftaran->id.'_'.time().'.pdf';
@@ -114,7 +106,6 @@ class VerifikasiDokumenController extends Controller
         $pendaftaran->file_dokumen = 'uploads/dokumen/'.$fileName;
     }
 
-    // Upload foto baru
     if ($request->hasFile('foto')) {
         $foto = $request->file('foto');
         $fotoName = 'foto_'.$pendaftaran->id.'_'.time().'.'.$foto->extension();
@@ -122,7 +113,6 @@ class VerifikasiDokumenController extends Controller
         $pendaftaran->foto = 'uploads/foto/'.$fotoName;
     }
 
-    // Reset status dokumen jadi menunggu verifikasi
     $pendaftaran->status_dokumen = 'pending';
     $pendaftaran->alasan_penolakan = null;
     $pendaftaran->save();
