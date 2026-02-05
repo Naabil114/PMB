@@ -12,12 +12,12 @@ class PendaftarAuthController extends Controller
 {
   public function formLogin()
   {
-    return view('Auth.login-pendaftar');
+    return view('auth.login-pendaftar');
   }
 
   public function formRegister()
   {
-    return view('Auth.register-pendaftar');
+    return view('auth.register-pendaftar');
   }
 
   public function register(Request $request)

@@ -47,15 +47,30 @@
     </nav>
 
     <header class="hero-section">
-        <div class="container text-center">
-            <h1 class="display-3 fw-bold mb-3">Masa Depan Cerah Dimulai di Sini</h1>
-            <p class="lead mb-4">Penerimaan Mahasiswa Baru Tahun Akademik 2026/2027 telah dibuka. Bergabunglah bersama kami!</p>
-            <div class="d-grid gap-2 d-md-block">
-                <button class="btn btn-primary btn-lg px-5 me-md-2" data-bs-toggle="modal" data-bs-target="#loginChoiceModal">Daftar Sekarang</button>
-                <button class="btn btn-outline-light btn-lg px-5">Lihat Brosur</button>
-            </div>
+    <div class="container text-center">
+        <h1 class="display-3 fw-bold mb-3">
+            Masa Depan Cerah Dimulai di Sini
+        </h1>
+
+        <p class="lead mb-4">
+            Penerimaan Mahasiswa Baru Tahun Akademik 2026/2027 telah dibuka.
+            Bergabunglah bersama kami!
+        </p>
+
+        <div class="d-grid gap-2 d-md-flex justify-content-center">
+            <a href="{{ route('pendaftar.register') }}"
+               class="btn btn-primary btn-lg px-5 me-md-2">
+                Daftar Sekarang
+            </a>
+
+            <a href="#"
+               class="btn btn-outline-light btn-lg px-5">
+                Lihat Brosur
+            </a>
         </div>
-    </header>
+    </div>
+</header>
+
 
     <div class="modal fade" id="loginChoiceModal" tabindex="-1" aria-labelledby="loginChoiceLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
