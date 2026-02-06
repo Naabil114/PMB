@@ -15,7 +15,6 @@ Aplikasi web untuk mengelola sistem penerimaan mahasiswa baru tingkat Pascasarja
 
 ### Frontend
 
-- **CSS Framework**: Tailwind CSS 4.x
 - **Build Tool**: Vite 7.x
 - **JavaScript**: Vanilla JS + Axios
 - **Template Engine**: Blade (Laravel)
@@ -43,7 +42,7 @@ Aplikasi web untuk mengelola sistem penerimaan mahasiswa baru tingkat Pascasarja
 1. **Clone Repository**
 
     ```bash
-    git clone <repository-url>
+    git clone https://github.com/Naabil114/PMB.git
     cd pmb
     ```
 
@@ -65,7 +64,7 @@ Aplikasi web untuk mengelola sistem penerimaan mahasiswa baru tingkat Pascasarja
     # Run database migrations
     php artisan migrate
 
-    # Seed database (optional)
+    # Seed database 
     php artisan db:seed
     ```
 
@@ -94,6 +93,11 @@ Aplikasi web untuk mengelola sistem penerimaan mahasiswa baru tingkat Pascasarja
     # Access application at http://localhost:8000
     ```
 
+### LOGIN
+
+1. **Username**: admin
+2. **Password**: admin123
+
 ## Fitur yang Diimplementasikan
 
 - [✅] **Login & Authentication**
@@ -105,14 +109,14 @@ Aplikasi web untuk mengelola sistem penerimaan mahasiswa baru tingkat Pascasarja
     - Validasi dokumen oleh verifikator
     - Status tracking dokumen
 
-- [x] **WhatsApp Notifikasi (Mock)**
+- [] **WhatsApp Notifikasi (Mock)**
     - Notifikasi status pendaftaran via mock WA service
     - Notifikasi hasil verifikasi dokumen
     - Notifikasi jadwal ujian
 
 - [ ] **Manajemen Jadwal Ujian** (In Development)
 - [ ] **Hasil dan Kelulusan** (In Development)
-- [ ] **Laporan & Analytics** (In Development)
+
 
 
 
@@ -131,6 +135,4 @@ Aplikasi web untuk mengelola sistem penerimaan mahasiswa baru tingkat Pascasarja
 
 ```
 
-## License
 
-Closed Source - Hak Cipta Institusi
