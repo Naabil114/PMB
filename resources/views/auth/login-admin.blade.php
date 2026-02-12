@@ -23,7 +23,6 @@
                                 {!! nl2br(e(session('success'))) !!}
                             </div>
                         @endif
-                        {{-- error --}}
                         @if (session('error'))
                             <div class="alert alert-danger">
                                 {{ session('error') }}

@@ -131,17 +131,18 @@
                         </div>
 
                         <div class="card-footer text-right">
+                            <a href="{{ route('pendaftaran.step4', $pendaftaran->id) }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Kembali
+                            </a>
+
                             <form method="POST" id="submitForm"
-                                action="{{ route('pendaftaran.submit', $pendaftaran->id) }}">
+                                action="{{ route('pendaftaran.submit', $pendaftaran->id) }}" style="display:inline;">
                                 @csrf
                                 <button type="submit" class="btn btn-success">
-                                    <i class="fas fa-paper-plane"></i>
-                                    Kirim Pendaftaran
+                                    <i class="fas fa-paper-plane"></i> Kirim Pendaftaran
                                 </button>
                             </form>
                         </div>
-
-
                     </div>
 
                 </div>
@@ -151,29 +152,30 @@
     </section>
 @endsection
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const form = document.getElementById('submitForm');
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('submitForm');
+            if (!form) return;
 
-        if (!form) return;
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
 
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            Swal.fire({
-                title: 'Yakin mengirim pendaftaran?',
-                text: 'Setelah dikirim, data tidak bisa diubah!',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Ya, kirim sekarang!',
-                cancelButtonText: 'Batal'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    form.submit();
-                }
+                Swal.fire({
+                    title: 'Yakin mengirim pendaftaran?',
+                    text: 'Setelah dikirim, data tidak bisa diubah!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#28a745',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ya, Kirim!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
             });
         });
-    });
-</script>
+    </script>
+@endpush

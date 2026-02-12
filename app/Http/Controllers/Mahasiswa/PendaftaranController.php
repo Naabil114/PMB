@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Mahasiswa;
 
+use App\Models\Pendaftar;
 use App\Models\JadwalUjian;
 use App\Models\Pendaftaran;
 use App\Models\ProgramStudi;
@@ -42,23 +43,33 @@ class PendaftaranController extends Controller
         $request->validate([
             'periode_penerimaan_id' => 'required|exists:periode_penerimaan,id',
             'jenjang' => 'required|in:S1,S2',
-        ], [
-            'whatsapp.regex' => 'Nomor WhatsApp harus berupa angka dan 10-15 digit',
         ]);
 
-        $pendaftarId = Auth::guard('pendaftar')->user();
-        if (!$pendaftarId) abort(401, 'Silakan login');
+        $pendaftar = Auth::guard('pendaftar')->user();
+        if (!$pendaftar)
+            abort(401);
 
-        $pendaftaran = Pendaftaran::create([
-            'pendaftar_id' => $pendaftarId->id,
-            'periode_penerimaan_id' => $request->periode_penerimaan_id,
-            'jenjang' => $request->jenjang,
-            'status_pendaftaran' => 'draft',
-            'status_ujian' => 'not_taken',
-        ]);
+        $pendaftaran = Pendaftaran::where('pendaftar_id', $pendaftar->id)
+            ->where('periode_penerimaan_id', $request->periode_penerimaan_id)
+            ->first();
+
+        if ($pendaftaran) {
+            $pendaftaran->update([
+                'jenjang' => $request->jenjang,
+            ]);
+        } else {
+            $pendaftaran = Pendaftaran::create([
+                'pendaftar_id' => $pendaftar->id,
+                'periode_penerimaan_id' => $request->periode_penerimaan_id,
+                'jenjang' => $request->jenjang,
+                'status_pendaftaran' => 'draft',
+                'status_ujian' => 'not_taken',
+            ]);
+        }
 
         return redirect()->route('pendaftaran.step2', $pendaftaran->id);
     }
+
 
     public function step2($id)
     {
@@ -81,7 +92,7 @@ class PendaftaranController extends Controller
             'program_studi_id' => [
                 'required',
                 'exists:program_studi,id',
-                function($attribute, $value, $fail) use ($pendaftaran) {
+                function ($attribute, $value, $fail) use ($pendaftaran) {
                     $prodi = ProgramStudi::find($value);
                     if (!$prodi || $prodi->jenjang !== $pendaftaran->jenjang) {
                         $fail('Program Studi tidak valid untuk jenjang ini.');
@@ -165,18 +176,20 @@ class PendaftaranController extends Controller
         $dokumenDir = public_path('uploads/dokumen');
         $fotoDir = public_path('uploads/foto');
 
-        if (!file_exists($dokumenDir)) mkdir($dokumenDir, 0755, true);
-        if (!file_exists($fotoDir)) mkdir($fotoDir, 0755, true);
+        if (!file_exists($dokumenDir))
+            mkdir($dokumenDir, 0755, true);
+        if (!file_exists($fotoDir))
+            mkdir($fotoDir, 0755, true);
 
-        $pdfName = 'dokumen_'.$pendaftaran->id.'_'.time().'.pdf';
-        $fotoName = 'foto_'.$pendaftaran->id.'_'.time().'.'.$request->foto->extension();
+        $pdfName = 'dokumen_' . $pendaftaran->id . '_' . time() . '.pdf';
+        $fotoName = 'foto_' . $pendaftaran->id . '_' . time() . '.' . $request->foto->extension();
 
         $request->file('file_dokumen')->move($dokumenDir, $pdfName);
         $request->file('foto')->move($fotoDir, $fotoName);
 
         $pendaftaran->update([
-            'file_dokumen' => 'uploads/dokumen/'.$pdfName,
-            'foto' => 'uploads/foto/'.$fotoName,
+            'file_dokumen' => 'uploads/dokumen/' . $pdfName,
+            'foto' => 'uploads/foto/' . $fotoName,
             'status_dokumen' => 'pending',
         ]);
 
@@ -216,20 +229,33 @@ class PendaftaranController extends Controller
     }
 
     private function authorizeAccess($pendaftaran)
-{
-    $pendaftar = Auth::guard('pendaftar')->user();
+    {
+        $pendaftar = Auth::guard('pendaftar')->user();
 
-    if (!$pendaftar) {
-        abort(401, 'Silakan login');
+        if (!$pendaftar) {
+            abort(401, 'Silakan login');
+        }
+
+        $pendaftarId = $pendaftar->id;
+
+        if ((int) $pendaftaran->pendaftar_id !== (int) $pendaftarId) {
+            abort(403, 'Akses tidak diizinkan');
+        }
+
     }
 
-    $pendaftarId = $pendaftar->id;
+    public function dataPendaftar()
+    {
+        $pendaftar = Auth::guard('pendaftar')->user();
 
-    if ((int) $pendaftaran->pendaftar_id !== (int) $pendaftarId) {
-        abort(403, 'Akses tidak diizinkan');
+        if (!$pendaftar) {
+            abort(401, 'Silakan login');
+        }
+
+        return view('mahasiswa.data.index', compact('pendaftar'));
     }
 
-}
+
 
 
 }

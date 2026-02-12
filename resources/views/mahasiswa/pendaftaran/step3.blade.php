@@ -183,11 +183,16 @@
 
                             </div>
 
-                            <div class="card-footer text-right">
+                            <div class="card-footer d-flex justify-content-between">
+                                <a href="{{ route('pendaftaran.step2', $pendaftaran->id) }}" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left"></i> Kembali
+                                </a>
+
                                 <button type="submit" class="btn btn-primary">
                                     Lanjut
                                 </button>
                             </div>
+
 
                         </form>
 

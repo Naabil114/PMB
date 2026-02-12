@@ -9,7 +9,6 @@
 
         <ul class="sidebar-menu">
 
-            {{-- ================= ADMIN ================= --}}
             @if (auth('web')->check())
 
                 <li class="menu-header">Dashboard</li>
@@ -57,6 +56,13 @@
                     </a>
                 </li>
 
+                <li class="menu-header">Data Pendaftar</li>
+                <li class="{{ request()->routeIs('pendaftar.*') ? 'active' : '' }}">
+                    <a href="{{ route('pendaftar.index') }}" class="nav-link">
+                        <i class="fa-solid fa-users"></i><span>Data Pendaftar</span>
+                    </a>
+                </li>
+
                 <li class="menu-header">Yudisium & Kelulusan</li>
                 <li class="{{ request()->routeIs('yudisium.*') ? 'active' : '' }}">
                     <a href="{{ route('yudisium.index') }}" class="nav-link">
@@ -67,13 +73,12 @@
                 <li class="menu-header">Verifikasi</li>
                 <li class="{{ request()->routeIs('verifikasi.*') ? 'active' : '' }}">
                     <a href="{{ route('verifikasi.index') }}" class="nav-link">
-                        <i class="fas fa-file-check"></i><span>Verifikasi Dokumen</span>
+                        <i class="fa-solid fa-file"></i><span>Verifikasi Dokumen</span>
                     </a>
                 </li>
 
             @endif
 
-            {{-- ================= PENDAFTAR ================= --}}
             @if (auth('pendaftar')->check())
 
                 <li class="menu-header">Pendaftar</li>
@@ -86,7 +91,19 @@
 
                 <li class="{{ request()->routeIs('pendaftar.verifikasi.*') ? 'active' : '' }}">
                     <a href="{{ route('pendaftar.verifikasi.index') }}" class="nav-link">
-                        <i class="fas fa-file-check"></i><span>Dokumen Saya</span>
+                        <i class="fa-solid fa-file"></i><span>Dokumen Saya</span>
+                    </a>
+                </li>
+                 <li class="menu-header">Data Pendaftar</li>
+                <li class="{{ request()->routeIs('pendaftar.data') ? 'active' : '' }}">
+                    <a href="{{ route('pendaftar.data') }}" class="nav-link">
+                        <i class="fa-solid fa-users"></i><span>Data Pendaftar</span>
+                    </a>
+                </li>
+                 <li class="menu-header">Cek Kelulusan</li>
+                <li class="{{ request()->routeIs('cek.kelulusan') ? 'active' : '' }}">
+                    <a href="{{ route('cek.kelulusan') }}" class="nav-link">
+                        <i class="fa-solid fa-check-circle"></i><span>Cek Kelulusan</span>
                     </a>
                 </li>
 

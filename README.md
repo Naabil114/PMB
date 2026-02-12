@@ -102,17 +102,17 @@ Aplikasi web untuk mengelola sistem penerimaan mahasiswa baru tingkat Pascasarja
 
 - [✅] **Login & Authentication**
     - Autentikasi berbasis JWT
-    - Role-based access control (Admin, Calon Mahasiswa, Verifikator)
+    - Role-based access control (Admin, Calon Mahasiswa, Prodi)
 
 - [✅] **Upload & Verifikasi Dokumen**
     - Upload dokumen (KTP, Ijazah, Transkrip, dll)
     - Validasi dokumen oleh verifikator
     - Status tracking dokumen
 
-- [] **WhatsApp Notifikasi (Mock)**
-    - Notifikasi status pendaftaran via mock WA service
-    - Notifikasi hasil verifikasi dokumen
-    - Notifikasi jadwal ujian
+- [✅] **WhatsApp Notifikasi**
+    - Notifikasi status pendaftaran via WA 
+    - Notifikasi hasil verifikasi dokumen via WA
+    - Notifikasi nomor pendaftaran dan kode akses via WA
 
 - [ ] **Manajemen Jadwal Ujian** (In Development)
 - [ ] **Hasil dan Kelulusan** (In Development)

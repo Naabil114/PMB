@@ -36,7 +36,7 @@
                                 <label>Nomor Pendaftaran</label>
                                 <input type="text" name="nomor_pendaftaran"
                                     class="form-control @error('nomor_pendaftaran') is-invalid @enderror"
-                                    value="PMB-202602034578" required autofocus>
+                                     required autofocus>
                                 @error('nomor_pendaftaran')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -44,7 +44,7 @@
 
                             <div class="form-group">
                                 <label>Kode Akses</label>
-                                <input type="password" name="kode_akses" value="HJjTZNqZ"
+                                <input type="password" name="kode_akses"
                                     class="form-control @error('kode_akses') is-invalid @enderror" required>
                                 @error('kode_akses')
                                     <div class="invalid-feedback">{{ $message }}</div>

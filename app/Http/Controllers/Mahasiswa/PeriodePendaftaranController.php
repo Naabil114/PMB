@@ -21,4 +21,6 @@ class PeriodePendaftaranController extends Controller
 
         return view('mahasiswa.periode.index', compact('periodes'));
     }
+
+    
 }

@@ -20,6 +20,7 @@ return new class extends Migration {
             $table->timestamp('dikirim_pada')->nullable();
             $table->enum('status', ['sent', 'failed', 'pending'])->default('pending');
             $table->text('pesan_error')->nullable();
+            $table->timestamps();
 
             $table->foreign('pendaftaran_id')->references('id')->on('pendaftaran');
         });

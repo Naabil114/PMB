@@ -87,7 +87,7 @@
 
                             <div class="form-group">
                                 <label>WhatsApp</label>
-                                <input type="text" name="whatsapp" class="form-control" value="{{ old('whatsapp') }}"
+                                <input type="number" name="whatsapp" class="form-control" value="{{ old('whatsapp') }}"
                                     required>
                             </div>
 

@@ -5,6 +5,7 @@ namespace App\Imports;
 use App\Models\NilaiUjian;
 use App\Models\Pendaftar;
 use App\Models\Pendaftaran;
+use Illuminate\Support\Facades\Http;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
@@ -18,14 +19,12 @@ class NilaiUjianImport implements ToModel, WithHeadingRow
         try {
             $nomor = trim($row['nomor_pendaftaran']);
 
-            // ================= 1. Cari pendaftar =================
             $pendaftar = Pendaftar::where('nomor_pendaftaran', $nomor)->first();
             if (!$pendaftar) {
                 $this->failed++;
                 return null;
             }
 
-            // ================= 2. Cari pendaftaran =================
             $pendaftaran = Pendaftaran::where('pendaftar_id', $pendaftar->id)
                 ->latest()
                 ->first();
@@ -35,13 +34,11 @@ class NilaiUjianImport implements ToModel, WithHeadingRow
                 return null;
             }
 
-            // ================= 3. Cegah duplikat nilai =================
             if (NilaiUjian::where('pendaftaran_id', $pendaftaran->id)->exists()) {
                 $this->failed++;
                 return null;
             }
 
-            // ================= 4. Validasi nilai =================
             $nilaiTulis     = (float) $row['nilai_tulis'];
             $nilaiWawancara = (float) $row['nilai_wawancara'];
 
@@ -53,18 +50,20 @@ class NilaiUjianImport implements ToModel, WithHeadingRow
                 return null;
             }
 
-            // ================= 5. Tentukan kelulusan =================
             $lulus = (int) ($row['lulus'] ?? 0);
 
-            // ================= 6. UPDATE STATUS PENDAFTARAN 🔥 =================
             $pendaftaran->update([
                 'status_ujian' => 'completed',
                 'status_hasil' => $lulus ? 'passed' : 'failed',
             ]);
 
+            if ($lulus === 1) {
+                $nomorWa = preg_replace('/[^0-9]/', '', $pendaftar->whatsapp);
+                $this->kirimWhatsApp($nomorWa, $pendaftar->nama_lengkap);
+            }
+
             $this->success++;
 
-            // ================= 7. Simpan nilai ujian =================
             return new NilaiUjian([
                 'pendaftaran_id'  => $pendaftaran->id,
                 'nilai_tulis'     => $nilaiTulis,
@@ -81,5 +80,28 @@ class NilaiUjianImport implements ToModel, WithHeadingRow
             $this->failed++;
             return null;
         }
+    }
+
+    
+    protected function kirimWhatsApp($nomor, $nama)
+    {
+        $token = config('services.fonnte.api_key');
+        $url   = config('services.fonnte.url');
+
+        $message = "Halo *$nama*,\n\n"
+            . "Selamat 🎉 Anda *LULUS UJIAN*.\n"
+            . "Silakan login ke dashboard PMB untuk melihat informasi selanjutnya.\n\n"
+            . "Terima kasih.";
+
+        $response = Http::asForm()
+            ->withHeaders([
+                'Authorization' => $token
+            ])
+            ->post($url, [
+                'target'  => $nomor,
+                'message' => $message
+            ]);
+
+        
     }
 }

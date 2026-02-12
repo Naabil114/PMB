@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'fonnte' => [
+    'api_key' => env('FONNTE_API_KEY'),
+    'url' => env('FONNTE_API_URL'),
+],
+
 ];
