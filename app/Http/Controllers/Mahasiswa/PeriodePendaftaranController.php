@@ -10,17 +10,18 @@ class PeriodePendaftaranController extends Controller
 {
 
     public function index()
-    {
-        $periodes = PeriodePenerimaan::with([
-            'pendaftaran' => function ($q) {
-                $q->where('pendaftar_id', session('pendaftar_id'));
-            }
-        ])->get();
+{
+    $periodes = PeriodePenerimaan::with([
+        'pendaftaran' => function ($q) {
+            $q->where('pendaftar_id', session('pendaftar_id'));
+        }
+    ])
+    ->orderBy('tanggal_mulai_pendaftaran', 'desc')
+    ->get();
 
-        $periodes = PeriodePenerimaan::orderBy('tanggal_mulai_pendaftaran', 'desc')->get();
+    return view('mahasiswa.periode.index', compact('periodes'));
+}
 
-        return view('mahasiswa.periode.index', compact('periodes'));
-    }
 
     
 }

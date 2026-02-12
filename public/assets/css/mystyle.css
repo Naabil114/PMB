@@ -12,3 +12,13 @@
 .column-gap-3{
   column-gap : 1.5rem;
 }
+
+@media (max-width: 1024px) {
+  body.sidebar-gone .main-sidebar {
+    left: -260px;
+  }
+
+  body:not(.sidebar-gone) .main-sidebar {
+    left: 0;
+  }
+}
