@@ -15,7 +15,7 @@ use App\Http\Controllers\PeriodePenerimaanController;
 use App\Http\Controllers\VerifikasiDokumenController;
 use App\Http\Controllers\Auth\PendaftarAuthController;
 use App\Http\Controllers\Mahasiswa\PendaftaranController;
-use App\Http\Controllers\mahasiswa\CekKelulusanController;
+use App\Http\Controllers\Mahasiswa\CekKelulusanController;
 use App\Http\Controllers\Mahasiswa\KartuPendaftaranController;
 use App\Http\Controllers\Mahasiswa\PeriodePendaftaranController;
 

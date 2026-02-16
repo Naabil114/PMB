@@ -131,7 +131,7 @@ class VerifikasiDokumenController extends Controller
 
         $pendaftaran = Pendaftaran::where('pendaftar_id', $pendaftarId->id)
             ->with('pendaftar', 'programStudi')
-            ->firstOrFail();
+            ->first();
 
         return view('mahasiswa.verifikasi-dokumen.index', compact('pendaftaran'));
     }

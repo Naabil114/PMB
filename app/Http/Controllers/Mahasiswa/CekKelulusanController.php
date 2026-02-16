@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\mahasiswa;
+namespace App\Http\Controllers\Mahasiswa;
 
 use App\Models\Pendaftar;
 use App\Models\Pendaftaran;
