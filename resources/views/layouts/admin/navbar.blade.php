@@ -3,7 +3,7 @@
     <form class="form-inline mr-auto">
         <ul class="navbar-nav mr-3">
 
-            @if (Auth::guard('web')->check())
+            @if (Auth::guard('web')->check() || Auth::guard('pendaftar')->check())
                 <li>
                     <a href="#" class="nav-link nav-link-lg main-sidebar-toggle">
                         <i class="fas fa-bars"></i>
