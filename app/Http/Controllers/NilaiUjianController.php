@@ -25,7 +25,7 @@ class NilaiUjianController extends Controller
         );
     }
 
-    public function import(Request $request)
+   public function import(Request $request)
 {
     $request->validate([
         'file' => 'required|mimes:xlsx'
@@ -34,15 +34,13 @@ class NilaiUjianController extends Controller
     $import = new NilaiUjianImport();
     Excel::import($import, $request->file('file'));
 
-    if ($import->failed > 0) {
-        return back()->with('warning',
-            "Import selesai. {$import->success} data berhasil disimpan, {$import->failed} data gagal."
-        );
-    }
-
     return back()->with('success',
-        "Import berhasil. {$import->success} data berhasil disimpan."
+        "Import selesai :
+        {$import->insert} ditambahkan,
+        {$import->update} diperbarui,
+        {$import->skip} dilewati"
     );
 }
+
 }
 

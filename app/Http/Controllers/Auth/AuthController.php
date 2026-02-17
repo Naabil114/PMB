@@ -17,7 +17,6 @@ class AuthController extends Controller
     
     public function login(Request $request)
 {
-    Auth::guard('pendaftar')->logout();
 
     $credentials = $request->validate([
         'username' => 'required',
@@ -36,7 +35,6 @@ class AuthController extends Controller
    
     public function logout(Request $request)
 {
-    Auth::guard('pendaftar')->logout(); 
     Auth::guard('web')->logout();
 
     $request->session()->invalidate();

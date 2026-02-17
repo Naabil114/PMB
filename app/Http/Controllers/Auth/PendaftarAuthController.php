@@ -102,7 +102,6 @@ class PendaftarAuthController extends Controller
 
   public function login(Request $request)
   {
-    Auth::guard('web')->logout();
     $credentials = $request->validate([
       'nomor_pendaftaran' => 'required',
       'kode_akses' => 'required',
@@ -122,7 +121,6 @@ class PendaftarAuthController extends Controller
   }
   public function logout(Request $request)
   {
-    Auth::guard('web')->logout();
     Auth::guard('pendaftar')->logout();
     $request->session()->invalidate();
     $request->session()->regenerateToken();

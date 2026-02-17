@@ -4,104 +4,96 @@ namespace App\Imports;
 
 use App\Models\NilaiUjian;
 use App\Models\Pendaftar;
-use App\Models\Pendaftaran;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
 class NilaiUjianImport implements ToModel, WithHeadingRow
 {
-    public int $success = 0;
-    public int $failed = 0;
+    public int $insert = 0;
+    public int $update = 0;
+    public int $skip   = 0;
 
     public function model(array $row)
     {
-        try {
-            $nomor = trim($row['nomor_pendaftaran']);
+        
 
-            $pendaftar = Pendaftar::where('nomor_pendaftaran', $nomor)->first();
-            if (!$pendaftar) {
-                $this->failed++;
-                return null;
-            }
+        if (empty($row['nomor_pendaftaran'])) {
+            $this->skip++;
+            return null;
+        }
 
-            $pendaftaran = Pendaftaran::where('pendaftar_id', $pendaftar->id)
-                ->latest()
-                ->first();
+        $pendaftar = Pendaftar::where('nomor_pendaftaran', trim($row['nomor_pendaftaran']))->first();
+        if (!$pendaftar) {
+            $this->skip++;
+            return null;
+        }
 
-            if (!$pendaftaran) {
-                $this->failed++;
-                return null;
-            }
+        $pendaftaran = $pendaftar->pendaftaran()->latest()->first();
+        if (!$pendaftaran) {
+            $this->skip++;
+            return null;
+        }
 
-            if (NilaiUjian::where('pendaftaran_id', $pendaftaran->id)->exists()) {
-                $this->failed++;
-                return null;
-            }
+        $nilaiTulis     = is_numeric($row['nilai_tulis']) ? (float)$row['nilai_tulis'] : null;
+        $nilaiWawancara = is_numeric($row['nilai_wawancara']) ? (float)$row['nilai_wawancara'] : null;
+        $lulus          = $row['lulus'];
 
-            $nilaiTulis     = (float) $row['nilai_tulis'];
-            $nilaiWawancara = (float) $row['nilai_wawancara'];
+        if ($nilaiTulis === null || $nilaiWawancara === null || !in_array($lulus, [0,1,'0','1'])) {
+            $this->skip++;
+            return null;
+        }
 
-            if (
-                $nilaiTulis < 0 || $nilaiTulis > 100 ||
-                $nilaiWawancara < 0 || $nilaiWawancara > 100
-            ) {
-                $this->failed++;
-                return null;
-            }
+        $data = [
+            'nilai_tulis'     => $nilaiTulis,
+            'nilai_wawancara' => $nilaiWawancara,
+            'nilai_total'     => $nilaiTulis + $nilaiWawancara,
+            'lulus'           => (int)$lulus,
+            'grade'           => strtoupper($row['grade'] ?? 'C'),
+            'catatan'         => $row['catatan'] ?? null,
+            'dinilai_oleh'    => Auth::id(),
+            'dinilai_pada'    => now(),
+        ];
 
-            $lulus = (int) ($row['lulus'] ?? 0);
+      
+
+        $nilai = NilaiUjian::where('pendaftaran_id', $pendaftaran->id)->first();
+
+        if ($nilai) {
+
+            $nilai->update($data);
+            $this->update++;
+
+        } else {
+
+            $data['pendaftaran_id'] = $pendaftaran->id;
+            NilaiUjian::create($data);
 
             $pendaftaran->update([
                 'status_ujian' => 'completed',
-                'status_hasil' => $lulus ? 'passed' : 'failed',
+                'status_hasil' => $data['lulus'] ? 'passed' : 'failed',
             ]);
 
-            if ($lulus === 1) {
-                $nomorWa = preg_replace('/[^0-9]/', '', $pendaftar->whatsapp);
-                $this->kirimWhatsApp($nomorWa, $pendaftar->nama_lengkap);
+            if ($data['lulus'] == 1 && !empty($pendaftar->whatsapp)) {
+                $this->kirimWhatsApp($pendaftar->whatsapp, $pendaftar->nama_lengkap);
             }
 
-            $this->success++;
-
-            return new NilaiUjian([
-                'pendaftaran_id'  => $pendaftaran->id,
-                'nilai_tulis'     => $nilaiTulis,
-                'nilai_wawancara' => $nilaiWawancara,
-                'nilai_total'     => $nilaiTulis + $nilaiWawancara,
-                'lulus'           => $lulus,
-                'grade'           => strtoupper($row['grade'] ?? 'C'),
-                'catatan'         => $row['catatan'] ?? null,
-                'dinilai_oleh'    => auth()->id(),
-                'dinilai_pada'    => now(),
-            ]);
-
-        } catch (\Throwable $e) {
-            $this->failed++;
-            return null;
+            $this->insert++;
         }
+
+        return null;
     }
 
-    
     protected function kirimWhatsApp($nomor, $nama)
     {
-        $token = config('services.fonnte.api_key');
-        $url   = config('services.fonnte.url');
+        $nomor = preg_replace('/[^0-9]/', '', $nomor);
 
-        $message = "Halo *$nama*,\n\n"
-            . "Selamat 🎉 Anda *LULUS UJIAN*.\n"
-            . "Silakan login ke dashboard PMB untuk melihat informasi selanjutnya.\n\n"
-            . "Terima kasih.";
-
-        $response = Http::asForm()
-            ->withHeaders([
-                'Authorization' => $token
-            ])
-            ->post($url, [
+        Http::asForm()
+            ->withHeaders(['Authorization' => config('services.fonnte.api_key')])
+            ->post(config('services.fonnte.url'), [
                 'target'  => $nomor,
-                'message' => $message
+                'message' => "Halo *$nama*, Anda LULUS ujian PMB 🎉"
             ]);
-
-        
     }
 }

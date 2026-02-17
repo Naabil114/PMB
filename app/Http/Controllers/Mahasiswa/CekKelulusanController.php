@@ -33,6 +33,9 @@ class CekKelulusanController extends Controller
             ->with(['programStudi', 'periode'])
             ->latest()
             ->first();
+            if(!$pendaftaran) {
+                return back()->with('error', 'Data pendaftaran tidak ditemukan untuk pendaftar ini.');
+            }
 
         return view('mahasiswa.cek-kelulusan.hasil', compact('pendaftar', 'pendaftaran'));
     }
