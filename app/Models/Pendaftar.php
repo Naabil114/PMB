@@ -13,7 +13,8 @@ class Pendaftar extends Authenticatable implements JWTSubject
 
     protected $table = 'pendaftar';
     protected $primaryKey = 'id';
-    public $timestamps = true; 
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     protected $fillable = [
         'nomor_pendaftaran',

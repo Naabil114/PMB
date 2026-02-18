@@ -33,14 +33,21 @@
                                             $periode->tanggal_mulai_pendaftaran,
                                             $periode->tanggal_selesai_pendaftaran,
                                         );
-                                    $hasRegistered = \App\Models\Pendaftaran::where(
-                                        'pendaftar_id',
-                                        auth('pendaftar')->id(),
-                                    )
+
+                                    $nomor = auth('pendaftar')->user()->nomor_pendaftaran;
+
+                                    $pendaftarId = \App\Models\Pendaftar::where('nomor_pendaftaran', $nomor)->value(
+                                        'id',
+                                    );
+
+                                    $hasRegistered = \App\Models\Pendaftaran::where('pendaftar_id', $pendaftarId)
                                         ->where('periode_penerimaan_id', $periode->id)
                                         ->exists();
                                 @endphp
+
                                 <tr>
+                                    
+
                                     <td>{{ $periode->nama_periode }}</td>
                                     <td>{{ $periode->tahun_akademik }}</td>
                                     <td>
